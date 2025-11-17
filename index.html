@@ -1,0 +1,1429 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sok!Anak - Sistem Pemantauan Gizi Berbasis IoT & AI</title>
+    <link rel="icon" type="image/x-icon" href="assets/logo.jpeg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2E7D32',
+                        'primary-light': '#4CAF50',
+                        'primary-dark': '#1B5E20',
+                        secondary: '#FF9800',
+                        accent: '#2196F3',
+                        'dark-green': '#1B5E20',
+                        'light-green': '#E8F5E9',
+                        'soft-green': '#F1F8E9'
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                        'card': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                        'glow': '0 0 20px rgba(46, 125, 50, 0.15)'
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-up': 'slideUp 0.5s ease-out',
+                        'pulse-soft': 'pulseSoft 2s infinite',
+                        'bounce-soft': 'bounceSoft 2s infinite'
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' }
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' }
+                        },
+                        pulseSoft: {
+                            '0%, 100%': { opacity: '1' },
+                            '50%': { opacity: '0.8' }
+                        },
+                        bounceSoft: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-5px)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .hero-gradient {
+            background: linear-gradient(135deg, #1B5E20 0%, #2E7D32 50%, #4CAF50 100%);
+        }
+        
+        .section-gradient {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .status-normal {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+        
+        .status-warning {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+        
+        .status-critical {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .nav-link {
+            position: relative;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: #2E7D32;
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .nav-link.active::after {
+            width: 100%;
+        }
+        
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+        
+        @keyframes floating {
+            0% { transform: translate(0, 0px); }
+            50% { transform: translate(0, 10px); }
+            100% { transform: translate(0, -0px); }
+        }
+        
+        .carousel-item {
+            display: none;
+            transition: opacity 0.5s ease;
+        }
+        
+        .carousel-item.active {
+            display: block;
+            opacity: 1;
+        }
+        
+        .roadmap-step {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .roadmap-step:hover {
+            transform: scale(1.05);
+            z-index: 10;
+        }
+        
+        .roadmap-step::after {
+            content: '';
+            position: absolute;
+            width: 2px;
+            height: 40px;
+            background-color: #2E7D32;
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .roadmap-step:last-child::after {
+            display: none;
+        }
+        
+        .impact-item {
+            transition: all 0.3s ease;
+        }
+        
+        .impact-item:hover {
+            transform: translateY(-5px);
+        }
+        
+        /* Smooth scroll behavior */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* Loading animation */
+        .loader {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #2E7D32;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Progress scroll indicator */
+        .progress-container {
+            width: 100%;
+            height: 4px;
+            background: #e5e7eb;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+        
+        .progress-bar {
+            height: 4px;
+            background: #2E7D32;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        /* Back to top button */
+        .back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #2E7D32;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .back-to-top.show {
+            opacity: 1;
+        }
+        
+        .back-to-top:hover {
+            background: #1B5E20;
+            transform: translateY(-3px);
+        }
+        
+        /* Interactive elements */
+        .interactive-card {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .interactive-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(46, 125, 50, 0.1) 0%, rgba(76, 175, 80, 0.05) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1;
+        }
+        
+        .interactive-card:hover::before {
+            opacity: 1;
+        }
+        
+        /* Tooltip styles */
+        .tooltip {
+            position: relative;
+        }
+        
+        .tooltip::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1B5E20;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            z-index: 10;
+        }
+        
+        .tooltip:hover::after {
+            opacity: 1;
+        }
+        
+        /* Professional enhancements */
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #1B5E20, #4CAF50);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .feature-icon {
+            transition: all 0.3s ease;
+        }
+        
+        .feature-icon:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+        
+        .stat-card {
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(46, 125, 50, 0.05) 0%, rgba(76, 175, 80, 0.02) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1;
+        }
+        
+        .stat-card:hover::before {
+            opacity: 1;
+        }
+        
+        .dashboard-tab {
+            transition: all 0.3s ease;
+        }
+        
+        .dashboard-tab.active {
+            background-color: #E8F5E9;
+            color: #2E7D32;
+            font-weight: 600;
+        }
+        
+        .dashboard-tab:not(.active):hover {
+            background-color: #f8fafc;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans" x-data="{ mobileMenuOpen: false, activeSection: 'home', activeDemoTab: 'kader' }">
+    <!-- Progress Scroll Indicator -->
+    <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+    
+    <!-- Back to Top Button -->
+    <div class="back-to-top" id="backToTop">
+        <i class="fas fa-chevron-up"></i>
+    </div>
+    
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-50 transition-all duration-300" id="header">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-primary rounded-xl p-2 shadow-md">
+                        <i class="fas fa-child text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-primary">Sok!Anak</h1>
+                        <p class="text-xs text-gray-500">Solusi Digital Pemantauan Gizi</p>
+                    </div>
+                </div>
+                <nav class="hidden lg:flex space-x-8">
+                    <a href="#home" class="nav-link text-primary font-medium" :class="{ 'active': activeSection === 'home' }" @click="activeSection = 'home'">Beranda</a>
+                    <a href="#masalah" class="nav-link text-gray-600 font-medium" :class="{ 'active': activeSection === 'masalah' }" @click="activeSection = 'masalah'">Masalah</a>
+                    <a href="#solusi" class="nav-link text-gray-600 font-medium" :class="{ 'active': activeSection === 'solusi' }" @click="activeSection = 'solusi'">Solusi</a>
+                    <a href="#fitur" class="nav-link text-gray-600 font-medium" :class="{ 'active': activeSection === 'fitur' }" @click="activeSection = 'fitur'">Fitur</a>
+                    <a href="#dampak" class="nav-link text-gray-600 font-medium" :class="{ 'active': activeSection === 'dampak' }" @click="activeSection = 'dampak'">Dampak</a>
+                    <a href="#demo" class="nav-link text-gray-600 font-medium" :class="{ 'active': activeSection === 'demo' }" @click="activeSection = 'demo'">Demo</a>
+                </nav>
+                <div class="flex items-center space-x-4">
+                    <a href="#demo" class="bg-primary hover:bg-primary-dark text-white font-medium py-2 px-4 rounded-lg transition shadow-sm transform hover:-translate-y-1">Demo Aplikasi</a>
+                    <div class="lg:hidden">
+                        <i class="fas fa-bars text-xl text-primary cursor-pointer" @click="mobileMenuOpen = !mobileMenuOpen"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div class="lg:hidden bg-white py-4 px-4 shadow-md border-t transition-all duration-300" x-show="mobileMenuOpen" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform -translate-y-2" x-transition:enter-end="opacity-100 transform translate-y-0" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 transform translate-y-0" x-transition:leave-end="opacity-0 transform -translate-y-2">
+            <div class="flex flex-col space-y-4">
+                <a href="#home" class="py-2 px-3 rounded-lg bg-primary/10 text-primary font-medium flex items-center" @click="mobileMenuOpen = false; activeSection = 'home'">
+                    <i class="fas fa-home mr-3"></i> Beranda
+                </a>
+                <a href="#masalah" class="py-2 px-3 rounded-lg hover:bg-gray-100 transition font-medium flex items-center" @click="mobileMenuOpen = false; activeSection = 'masalah'">
+                    <i class="fas fa-exclamation-triangle mr-3"></i> Masalah
+                </a>
+                <a href="#solusi" class="py-2 px-3 rounded-lg hover:bg-gray-100 transition font-medium flex items-center" @click="mobileMenuOpen = false; activeSection = 'solusi'">
+                    <i class="fas fa-lightbulb mr-3"></i> Solusi
+                </a>
+                <a href="#fitur" class="py-2 px-3 rounded-lg hover:bg-gray-100 transition font-medium flex items-center" @click="mobileMenuOpen = false; activeSection = 'fitur'">
+                    <i class="fas fa-star mr-3"></i> Fitur
+                </a>
+                <a href="#dampak" class="py-2 px-3 rounded-lg hover:bg-gray-100 transition font-medium flex items-center" @click="mobileMenuOpen = false; activeSection = 'dampak'">
+                    <i class="fas fa-chart-line mr-3"></i> Dampak
+                </a>
+                <a href="#demo" class="py-2 px-3 rounded-lg hover:bg-gray-100 transition font-medium flex items-center" @click="mobileMenuOpen = false; activeSection = 'demo'">
+                    <i class="fas fa-play-circle mr-3"></i> Demo
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero-gradient text-white py-16 md:py-24 relative overflow-hidden">
+        <!-- Animated background elements -->
+        <div class="absolute top-0 left-0 w-full h-full overflow-hidden opacity-10">
+            <div class="absolute -top-10 -left-10 w-40 h-40 rounded-full bg-white"></div>
+            <div class="absolute top-1/4 right-10 w-20 h-20 rounded-full bg-white"></div>
+            <div class="absolute bottom-10 left-1/4 w-32 h-32 rounded-full bg-white"></div>
+        </div>
+        
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="flex flex-col lg:flex-row items-center justify-between">
+                <div class="lg:w-1/2 mb-12 lg:mb-0 text-center lg:text-left animate-slide-up">
+                    <div class="inline-flex items-center glass-effect rounded-full px-4 py-2 mb-6 animate-pulse-soft">
+                        <span class="text-sm font-medium">Innovillage 2025 - Inovasi Desa Sukarame</span>
+                    </div>
+                    <h1 class="text-4xl md:text-5xl font-bold mb-6 leading-tight">Deteksi Dini Stunting dengan <span class="text-secondary">IoT & AI</span></h1>
+                    <p class="text-lg md:text-xl mb-8 text-white/90 max-w-2xl">Sistem pemantauan gizi real-time berbasis teknologi untuk Posyandu Desa Sukarame, Kabupaten Bandung.</p>
+                    <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 justify-center lg:justify-start">
+                        <a href="#demo" class="bg-secondary hover:bg-amber-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition transform hover:-translate-y-1 flex items-center justify-center animate-bounce-soft">
+                            <i class="fas fa-play-circle mr-2"></i> Coba Demo
+                        </a>
+                        <a href="#solusi" class="border-2 border-white hover:bg-white/10 text-white font-semibold py-3 px-6 rounded-lg transition flex items-center justify-center transform hover:-translate-y-1">
+                            <i class="fas fa-info-circle mr-2"></i> Pelajari Solusi
+                        </a>
+                    </div>
+                    <div class="mt-10 flex flex-wrap justify-center lg:justify-start gap-6">
+                        <div class="flex items-center glass-effect rounded-lg px-4 py-2 tooltip" data-tooltip="Akurasi pengukuran meningkat signifikan">
+                            <i class="fas fa-check-circle text-secondary mr-2"></i>
+                            <span class="text-sm font-medium">Akurasi Data</span>
+                        </div>
+                        <div class="flex items-center glass-effect rounded-lg px-4 py-2 tooltip" data-tooltip="Waktu administrasi berkurang drastis">
+                            <i class="fas fa-check-circle text-secondary mr-2"></i>
+                            <span class="text-sm font-medium">Efisiensi Waktu</span>
+                        </div>
+                        <div class="flex items-center glass-effect rounded-lg px-4 py-2 tooltip" data-tooltip="Rekomendasi personal untuk setiap anak">
+                            <i class="fas fa-check-circle text-secondary mr-2"></i>
+                            <span class="text-sm font-medium">Rekomendasi AI Personal</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="lg:w-1/2 flex justify-center relative">
+                    <div class="relative w-full max-w-md floating">
+                        <div class="glass-effect rounded-2xl p-6 shadow-2xl interactive-card">
+                            <div class="flex justify-between items-center mb-6">
+                                <h3 class="text-xl font-bold">Timbangan Digital Sok!Anak</h3>
+                                <div class="bg-primary-light rounded-full px-3 py-1 text-xs font-medium shadow-sm">IoT & AI</div>
+                            </div>
+                            <div class="bg-white rounded-xl p-4 mb-4 shadow-md flex justify-center">
+                                <img src="assets/timbangan-jerapah.jpeg" alt="Prototype Timbangan Sok!Anak dengan desain jerapah" class="w-full h-auto rounded-lg max-h-48 object-contain">
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="glass-effect rounded-lg p-4 text-center backdrop-blur-sm interactive-card">
+                                    <div class="text-xl font-bold">ESP32</div>
+                                    <div class="text-xs opacity-90 mt-1">Microcontroller</div>
+                                </div>
+                                <div class="glass-effect rounded-lg p-4 text-center backdrop-blur-sm interactive-card">
+                                    <div class="text-xl font-bold">Raspberry Pi</div>
+                                    <div class="text-xs opacity-90 mt-1">Mini Server</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="absolute -bottom-4 -right-4 bg-secondary text-white rounded-full w-16 h-16 flex items-center justify-center shadow-lg animate-pulse-soft">
+                            <i class="fas fa-robot text-2xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Masalah Section -->
+    <section id="masalah" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16 animate-slide-up">
+                <h2 class="text-3xl font-bold text-primary mb-4">Tantangan Stunting di Desa Sukarame</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto text-lg">Berdasarkan observasi lapangan, ditemukan permasalahan serius dalam penanganan stunting yang membutuhkan solusi inovatif</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+                <div class="bg-white border border-gray-200 rounded-xl p-6 card-hover shadow-soft interactive-card animate-fade-in" style="animation-delay: 0.1s">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center text-red-600 mr-4 shadow-sm feature-icon">
+                            <i class="fas fa-exclamation-triangle text-xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800">10 Anak per RW</h3>
+                    </div>
+                    <p class="text-gray-600">Rata-rata 10 anak di setiap RW di Desa Sukarame mengalami stunting berdasarkan data lapangan</p>
+                </div>
+
+                <div class="bg-white border border-gray-200 rounded-xl p-6 card-hover shadow-soft interactive-card animate-fade-in" style="animation-delay: 0.2s">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center text-amber-600 mr-4 shadow-sm feature-icon">
+                            <i class="fas fa-weight-scale text-xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800">Alat Manual Tidak Akurat</h3>
+                    </div>
+                    <p class="text-gray-600">Timbangan manual sering rusak menyebabkan ketidakakuratan data (contoh: 6,5 kg dilaporkan 7 kg)</p>
+                </div>
+
+                <div class="bg-white border border-gray-200 rounded-xl p-6 card-hover shadow-soft interactive-card animate-fade-in" style="animation-delay: 0.3s">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 mr-4 shadow-sm feature-icon">
+                            <i class="fas fa-clock text-xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800">3 Jam per Sesi</h3>
+                    </div>
+                    <p class="text-gray-600">Pencatatan manual oleh kader memakan waktu 3 jam per sesi Posyandu, mengurangi efisiensi</p>
+                </div>
+
+                <div class="bg-white border border-gray-200 rounded-xl p-6 card-hover shadow-soft interactive-card animate-fade-in" style="animation-delay: 0.4s">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 mr-4 shadow-sm feature-icon">
+                            <i class="fas fa-graduation-cap text-xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800">Minim Edukasi</h3>
+                    </div>
+                    <p class="text-gray-600">Tidak ada platform edukasi stunting yang mudah diakses orang tua untuk pencegahan mandiri</p>
+                </div>
+            </div>
+
+            <div class="bg-light-green rounded-2xl p-8 shadow-soft animate-slide-up">
+                <div class="flex flex-col md:flex-row items-center">
+                    <div class="md:w-1/2 mb-6 md:mb-0">
+                        <h3 class="text-2xl font-bold text-primary mb-6">Validasi Masalah Lapangan</h3>
+                        <ul class="space-y-4 text-gray-700">
+                            <li class="flex items-start animate-fade-in" style="animation-delay: 0.1s">
+                                <div class="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary mt-1 mr-3 flex-shrink-0">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                                <span><strong class="text-primary">95% partisipasi Posyandu</strong>, tetapi pemahaman gizi masyarakat masih rendah</span>
+                            </li>
+                            <li class="flex items-start animate-fade-in" style="animation-delay: 0.2s">
+                                <div class="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary mt-1 mr-3 flex-shrink-0">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                                <span><strong class="text-primary">80% kader</strong> melaporkan kesulitan dengan alat ukur yang ada</span>
+                            </li>
+                            <li class="flex items-start animate-fade-in" style="animation-delay: 0.3s">
+                                <div class="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary mt-1 mr-3 flex-shrink-0">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                                <span><strong class="text-primary">75% ibu</strong> tidak tahu langkah lanjut setelah pengukuran anak</span>
+                            </li>
+                            <li class="flex items-start animate-fade-in" style="animation-delay: 0.4s">
+                                <div class="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary mt-1 mr-3 flex-shrink-0">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                                <span><strong class="text-primary">Riset lapangan</strong> menunjukkan 10 balita stunting per RW di Desa Sukarame</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="md:w-1/2 flex justify-center">
+                        <div class="bg-white p-6 rounded-xl shadow-card max-w-xs animate-fade-in" style="animation-delay: 0.5s">
+                            <h4 class="text-lg font-semibold text-primary mb-4 text-center">Data Stunting</h4>
+                            <canvas id="problemChart" width="300" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Solusi Section -->
+    <section id="solusi" class="py-16 section-gradient">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16 animate-slide-up">
+                <h2 class="text-3xl font-bold text-primary mb-4">Solusi Inovatif Sok!Anak</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto text-lg">Integrasi teknologi IoT & AI untuk deteksi dini dan pencegahan stunting di Posyandu</p>
+            </div>
+            
+            <div class="flex flex-col lg:flex-row items-center justify-between gap-12 mb-16">
+                <div class="lg:w-1/2 animate-slide-up">
+                    <h3 class="text-2xl font-bold text-primary mb-6">Timbangan Digital dengan Desain Ramah Anak</h3>
+                    <p class="text-gray-700 mb-6 text-lg">Desain casing jerapah yang menarik dengan sensor IoT terintegrasi untuk pengukuran berat dan tinggi badan yang akurat.</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        <div class="flex items-center bg-white p-4 rounded-lg shadow-soft interactive-card animate-fade-in" style="animation-delay: 0.1s">
+                            <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary mr-4 shadow-sm feature-icon">
+                                <i class="fas fa-microchip"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-800">ESP32 Microcontroller</h4>
+                                <p class="text-sm text-gray-600">Pemrosesan data real-time</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center bg-white p-4 rounded-lg shadow-soft interactive-card animate-fade-in" style="animation-delay: 0.2s">
+                            <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary mr-4 shadow-sm feature-icon">
+                                <i class="fas fa-weight-scale"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-800">Load Cell Sensor</h4>
+                                <p class="text-sm text-gray-600">Pengukuran berat akurat</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center bg-white p-4 rounded-lg shadow-soft interactive-card animate-fade-in" style="animation-delay: 0.3s">
+                            <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary mr-4 shadow-sm feature-icon">
+                                <i class="fas fa-ruler-vertical"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-800">Sensor Ultrasonic</h4>
+                                <p class="text-sm text-gray-600">Pengukuran tinggi badan</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center bg-white p-4 rounded-lg shadow-soft interactive-card animate-fade-in" style="animation-delay: 0.4s">
+                            <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary mr-4 shadow-sm feature-icon">
+                                <i class="fas fa-display"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-800">Touchscreen Display</h4>
+                                <p class="text-sm text-gray-600">Antarmuka pengguna intuitif</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="lg:w-1/2 flex justify-center animate-fade-in" style="animation-delay: 0.5s">
+                    <div class="bg-white p-6 rounded-2xl shadow-card max-w-md interactive-card">
+                        <img src="assets/timbangan-jerapah.jpeg" alt="Prototype Timbangan Sok!Anak" class="w-full h-auto rounded-xl mb-4">
+                        <div class="text-center text-gray-600">Prototype timbangan digital dengan desain ramah anak</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-2xl p-8 shadow-card animate-slide-up">
+                <h3 class="text-2xl font-bold text-primary mb-8 text-center">Cara Kerja Sistem Sok!Anak</h3>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div class="text-center p-4 rounded-xl bg-light-green/30 interactive-card animate-fade-in" style="animation-delay: 0.1s">
+                        <div class="w-16 h-16 rounded-full bg-primary text-white flex items-center justify-center text-xl font-bold mx-auto mb-4 shadow-md feature-icon">1</div>
+                        <h4 class="text-lg font-semibold text-primary mb-3">Pengukuran</h4>
+                        <p class="text-gray-600 text-sm">Anak ditimbang menggunakan timbangan digital dengan sensor IoT yang terintegrasi</p>
+                    </div>
+                    <div class="text-center p-4 rounded-xl bg-light-green/30 interactive-card animate-fade-in" style="animation-delay: 0.2s">
+                        <div class="w-16 h-16 rounded-full bg-primary text-white flex items-center justify-center text-xl font-bold mx-auto mb-4 shadow-md feature-icon">2</div>
+                        <h4 class="text-lg font-semibold text-primary mb-3">Analisis Data</h4>
+                        <p class="text-gray-600 text-sm">Data berat dan tinggi dikirim ke sistem AI untuk analisis status gizi</p>
+                    </div>
+                    <div class="text-center p-4 rounded-xl bg-light-green/30 interactive-card animate-fade-in" style="animation-delay: 0.3s">
+                        <div class="w-16 h-16 rounded-full bg-primary text-white flex items-center justify-center text-xl font-bold mx-auto mb-4 shadow-md feature-icon">3</div>
+                        <h4 class="text-lg font-semibold text-primary mb-3">Rekomendasi</h4>
+                        <p class="text-gray-600 text-sm">AI memberikan rekomendasi personal berdasarkan status gizi dan perkembangan anak</p>
+                    </div>
+                    <div class="text-center p-4 rounded-xl bg-light-green/30 interactive-card animate-fade-in" style="animation-delay: 0.4s">
+                        <div class="w-16 h-16 rounded-full bg-primary text-white flex items-center justify-center text-xl font-bold mx-auto mb-4 shadow-md feature-icon">4</div>
+                        <h4 class="text-lg font-semibold text-primary mb-3">Monitoring</h4>
+                        <p class="text-gray-600 text-sm">Orang tua dan kader memantau perkembangan melalui aplikasi dashboard</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Fitur Section -->
+    <section id="fitur" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12 animate-slide-up">
+                <h2 class="text-3xl font-bold text-primary mb-4">Fitur Unggulan Aplikasi</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto text-lg">Dashboard lengkap untuk kader Posyandu dan orang tua dengan berbagai fitur canggih dan terintegrasi</p>
+            </div>
+            
+            <!-- Carousel Container -->
+            <div class="relative max-w-4xl mx-auto">
+                <!-- Carousel Items -->
+                <div class="carousel-container overflow-hidden rounded-xl">
+                    <div class="carousel-item active animate-fade-in">
+                        <div class="bg-white rounded-xl p-8 card-hover border border-gray-200 shadow-soft flex flex-col md:flex-row items-center interactive-card">
+                            <div class="md:w-1/3 mb-6 md:mb-0 flex justify-center">
+                                <div class="w-32 h-32 rounded-full bg-primary/10 flex items-center justify-center text-primary text-4xl shadow-sm feature-icon">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                            </div>
+                            <div class="md:w-2/3 md:pl-8">
+                                <h3 class="text-2xl font-semibold text-primary mb-4">Dashboard Real-time</h3>
+                                <p class="text-gray-600 mb-6">Pemantauan perkembangan gizi anak secara berkala dengan visualisasi data yang informatif dan mudah dipahami.</p>
+                                <ul class="text-gray-600 space-y-2">
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check text-primary mt-1 mr-3"></i>
+                                        <span>Grafik pertumbuhan interaktif</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check text-primary mt-1 mr-3"></i>
+                                        <span>Status gizi terkini dan historis</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check text-primary mt-1 mr-3"></i>
+                                        <span>Visualisasi data perkembangan</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="carousel-item animate-fade-in">
+                        <div class="bg-white rounded-xl p-8 card-hover border border-gray-200 shadow-soft flex flex-col md:flex-row items-center interactive-card">
+                            <div class="md:w-1/3 mb-6 md:mb-0 flex justify-center">
+                                <div class="w-32 h-32 rounded-full bg-primary/10 flex items-center justify-center text-primary text-4xl shadow-sm feature-icon">
+                                    <i class="fas fa-robot"></i>
+                                </div>
+                            </div>
+                            <div class="md:w-2/3 md:pl-8">
+                                <h3 class="text-2xl font-semibold text-primary mb-4">Rekomendasi AI</h3>
+                                <p class="text-gray-600 mb-6">Kecerdasan buatan memberikan saran gizi personal berdasarkan data antropometri dan perkembangan anak.</p>
+                                <ul class="text-gray-600 space-y-2">
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check text-primary mt-1 mr-3"></i>
+                                        <span>Analisis status gizi otomatis</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check text-primary mt-1 mr-3"></i>
+                                        <span>Saran makanan bergizi personal</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check text-primary mt-1 mr-3"></i>
+                                        <span>Peringatan dini risiko stunting</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="carousel-item animate-fade-in">
+                        <div class="bg-white rounded-xl p-8 card-hover border border-gray-200 shadow-soft flex flex-col md:flex-row items-center interactive-card">
+                            <div class="md:w-1/3 mb-6 md:mb-0 flex justify-center">
+                                <div class="w-32 h-32 rounded-full bg-primary/10 flex items-center justify-center text-primary text-4xl shadow-sm feature-icon">
+                                    <i class="fas fa-shield-alt"></i>
+                                </div>
+                            </div>
+                            <div class="md:w-2/3 md:pl-8">
+                                <h3 class="text-2xl font-semibold text-primary mb-4">Keamanan & Privasi</h3>
+                                <p class="text-gray-600 mb-6">Sistem keamanan terjamin dengan perlindungan privasi informasi kesehatan anak.</p>
+                                <ul class="text-gray-600 space-y-2">
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check text-primary mt-1 mr-3"></i>
+                                        <span>Model AI sumber terbuka</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check text-primary mt-1 mr-3"></i>
+                                        <span>Kontrol akses multi-level</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check text-primary mt-1 mr-3"></i>
+                                        <span>Privasi data kesehatan terjamin</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Carousel Navigation -->
+                <div class="flex justify-center mt-8 space-x-4">
+                    <button class="carousel-prev bg-primary text-white w-10 h-10 rounded-full flex items-center justify-center shadow-md hover:bg-primary-dark transition transform hover:-translate-y-1">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <div class="flex space-x-2">
+                        <button class="carousel-indicator w-3 h-3 rounded-full bg-primary/30" data-index="0"></button>
+                        <button class="carousel-indicator w-3 h-3 rounded-full bg-primary/30" data-index="1"></button>
+                        <button class="carousel-indicator w-3 h-3 rounded-full bg-primary/30" data-index="2"></button>
+                    </div>
+                    <button class="carousel-next bg-primary text-white w-10 h-10 rounded-full flex items-center justify-center shadow-md hover:bg-primary-dark transition transform hover:-translate-y-1">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Demo Section -->
+    <section id="demo" class="py-16 section-gradient">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16 animate-slide-up">
+                <h2 class="text-3xl font-bold text-primary mb-4">Demo Aplikasi Sok!Anak</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto text-lg">Jelajahi fitur-fitur aplikasi melalui demo interaktif kami</p>
+            </div>
+            
+            <div class="bg-white rounded-2xl shadow-card overflow-hidden max-w-4xl mx-auto animate-fade-in">
+                <div class="flex border-b">
+                    <button class="dashboard-tab flex-1 py-4 font-semibold" :class="activeDemoTab === 'kader' ? 'active' : 'text-gray-500'" @click="activeDemoTab = 'kader'">Dashboard Kader</button>
+                    <button class="dashboard-tab flex-1 py-4 font-semibold" :class="activeDemoTab === 'orangtua' ? 'active' : 'text-gray-500'" @click="activeDemoTab = 'orangtua'">Dashboard Orang Tua</button>
+                </div>
+                
+                <div class="p-8">
+                    <div x-show="activeDemoTab === 'kader'">
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+                            <div>
+                                <h3 class="text-xl font-semibold text-primary">Dashboard Monitoring Gizi Anak</h3>
+                                <p class="text-gray-600">Posyandu RW 07, Desa Sukarame</p>
+                            </div>
+                            <div class="mt-4 md:mt-0 bg-accent/10 text-accent px-3 py-1 rounded-full text-sm font-medium animate-pulse-soft">
+                                <i class="fas fa-circle text-xs mr-1"></i> Live Data (dummy)
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                            <div class="stat-card bg-light-green/30 p-5 rounded-xl border border-green-200 animate-fade-in" style="animation-delay: 0.1s">
+                                <div class="flex justify-between items-center">
+                                    <h4 class="font-semibold text-primary">Total Anak Dipantau</h4>
+                                    <div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary feature-icon">
+                                        <i class="fas fa-child"></i>
+                                    </div>
+                                </div>
+                                <div class="text-2xl font-bold mt-2 text-primary">48</div>
+                            </div>
+                            
+                            <div class="stat-card bg-green-50 p-5 rounded-xl border border-green-200 animate-fade-in" style="animation-delay: 0.2s">
+                                <div class="flex justify-between items-center">
+                                    <h4 class="font-semibold text-green-700">Status Gizi Normal</h4>
+                                    <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-600 feature-icon">
+                                        <i class="fas fa-heart"></i>
+                                    </div>
+                                </div>
+                                <div class="text-2xl font-bold mt-2 text-green-700">32</div>
+                                <div class="text-sm text-green-600">67% dari total</div>
+                            </div>
+                            
+                            <div class="stat-card bg-amber-50 p-5 rounded-xl border border-amber-200 animate-fade-in" style="animation-delay: 0.3s">
+                                <div class="flex justify-between items-center">
+                                    <h4 class="font-semibold text-amber-700">Perlu Perhatian</h4>
+                                    <div class="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-amber-600 feature-icon">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                    </div>
+                                </div>
+                                <div class="text-2xl font-bold mt-2 text-amber-700">16</div>
+                                <div class="text-sm text-amber-600">33% dari total</div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-50 p-6 rounded-xl mb-8 border border-gray-200 animate-fade-in" style="animation-delay: 0.4s">
+                            <h4 class="font-semibold text-primary mb-4">Data Pengukuran Terbaru</h4>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm">
+                                    <thead>
+                                        <tr class="bg-primary/5">
+                                            <th class="py-3 px-4 text-left font-semibold text-primary">Nama Anak</th>
+                                            <th class="py-3 px-4 text-left font-semibold text-primary">Usia</th>
+                                            <th class="py-3 px-4 text-left font-semibold text-primary">Berat (kg)</th>
+                                            <th class="py-3 px-4 text-left font-semibold text-primary">Tinggi (cm)</th>
+                                            <th class="py-3 px-4 text-left font-semibold text-primary">Status Gizi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="border-b border-gray-200">
+                                            <td class="py-3 px-4">Anonim</td>
+                                            <td class="py-3 px-4">2 thn 3 bln</td>
+                                            <td class="py-3 px-4">11.2</td>
+                                            <td class="py-3 px-4">85</td>
+                                            <td class="py-3 px-4"><span class="inline-block py-1 px-3 rounded-full status-normal text-xs font-medium">Normal</span></td>
+                                        </tr>
+                                        <tr class="border-b border-gray-200">
+                                            <td class="py-3 px-4">Anonim</td>
+                                            <td class="py-3 px-4">3 thn 1 bln</td>
+                                            <td class="py-3 px-4">12.5</td>
+                                            <td class="py-3 px-4">88</td>
+                                            <td class="py-3 px-4"><span class="inline-block py-1 px-3 rounded-full status-warning text-xs font-medium">Risiko Stunting</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="py-3 px-4">Anonim</td>
+                                            <td class="py-3 px-4">1 thn 8 bln</td>
+                                            <td class="py-3 px-4">8.7</td>
+                                            <td class="py-3 px-4">76</td>
+                                            <td class="py-3 px-4"><span class="inline-block py-1 px-3 rounded-full status-critical text-xs font-medium">Stunting</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div x-show="activeDemoTab === 'orangtua'" class="animate-fade-in">
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+                            <div>
+                                <h3 class="text-xl font-semibold text-primary">Dashboard Orang Tua</h3>
+                                <p class="text-gray-600">Pemantauan perkembangan anak Anda</p>
+                            </div>
+                            <div class="mt-4 md:mt-0 bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium">
+                                <i class="fas fa-user mr-1"></i> Ibu Anonim
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                            <div class="bg-light-green/30 p-6 rounded-xl border border-green-200 animate-fade-in" style="animation-delay: 0.1s">
+                                <h4 class="font-semibold text-primary mb-4">Status Gizi Terkini</h4>
+                                <div class="flex items-center">
+                                    <div class="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center text-green-600 mr-4 feature-icon">
+                                        <i class="fas fa-heart text-xl"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-lg font-bold text-green-700">Normal</div>
+                                        <div class="text-sm text-gray-600">Status gizi anak dalam kondisi baik</div>
+                                    </div>
+                                </div>
+                                <div class="mt-4 text-sm text-gray-600">
+                                    <p>Rekomendasi: Pertahankan asupan gizi seimbang dan pola makan sehat.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-soft animate-fade-in" style="animation-delay: 0.2s">
+                                <h4 class="font-semibold text-primary mb-4">Perkembangan Berat Badan</h4>
+                                <div class="h-40 flex items-end justify-between">
+                                    <div class="flex flex-col items-center">
+                                        <div class="w-6 bg-primary rounded-t-md" style="height: 60%"></div>
+                                        <div class="text-xs mt-1">Jan</div>
+                                    </div>
+                                    <div class="flex flex-col items-center">
+                                        <div class="w-6 bg-primary rounded-t-md" style="height: 70%"></div>
+                                        <div class="text-xs mt-1">Feb</div>
+                                    </div>
+                                    <div class="flex flex-col items-center">
+                                        <div class="w-6 bg-primary rounded-t-md" style="height: 75%"></div>
+                                        <div class="text-xs mt-1">Mar</div>
+                                    </div>
+                                    <div class="flex flex-col items-center">
+                                        <div class="w-6 bg-primary rounded-t-md" style="height: 80%"></div>
+                                        <div class="text-xs mt-1">Apr</div>
+                                    </div>
+                                    <div class="flex flex-col items-center">
+                                        <div class="w-6 bg-primary rounded-t-md" style="height: 85%"></div>
+                                        <div class="text-xs mt-1">Mei</div>
+                                    </div>
+                                </div>
+                                <div class="mt-4 text-center text-sm text-gray-600">
+                                    Tren pertumbuhan: <span class="text-green-600 font-medium">Positif</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 animate-fade-in" style="animation-delay: 0.3s">
+                            <h4 class="font-semibold text-primary mb-4">Rekomendasi Gizi dari AI</h4>
+                            <div class="space-y-4">
+                                <div class="flex items-start">
+                                    <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary mt-1 mr-3 flex-shrink-0">
+                                        <i class="fas fa-utensils text-xs"></i>
+                                    </div>
+                                    <div>
+                                        <h5 class="font-medium text-gray-800">Sarapan Bergizi</h5>
+                                        <p class="text-sm text-gray-600">Sajikan bubur dengan tambahan sayuran dan protein seperti telur atau ayam cincang.</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start">
+                                    <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary mt-1 mr-3 flex-shrink-0">
+                                        <i class="fas fa-apple-alt text-xs"></i>
+                                    </div>
+                                    <div>
+                                        <h5 class="font-medium text-gray-800">Camilan Sehat</h5>
+                                        <p class="text-sm text-gray-600">Berikan buah potong atau yogurt sebagai camilan di antara waktu makan.</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start">
+                                    <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary mt-1 mr-3 flex-shrink-0">
+                                        <i class="fas fa-stethoscope text-xs"></i>
+                                    </div>
+                                    <div>
+                                        <h5 class="font-medium text-gray-800">Pemeriksaan Rutin</h5>
+                                        <p class="text-sm text-gray-600">Lakukan penimbangan bulanan di Posyandu untuk memantau perkembangan.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center animate-fade-in" style="animation-delay: 0.5s">
+                        <a href="login.html" class="bg-primary hover:bg-primary-dark text-white font-semibold py-3 px-8 rounded-lg transition inline-flex items-center shadow-md transform hover:-translate-y-1">
+                            <i class="fas fa-rocket mr-2"></i> Coba Aplikasi Lengkap
+                        </a>
+                        <p class="text-gray-600 text-sm mt-3">Login dengan akun demo untuk menjelajahi semua fitur aplikasi Sok!Anak</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dampak Section -->
+    <section id="dampak" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16 animate-slide-up">
+                <h2 class="text-3xl font-bold text-primary mb-4">Dampak Sosial & Roadmap</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto text-lg">Target pencapaian dan rencana pengembangan Sok!Anak untuk tahun 2025-2027</p>
+            </div>
+            
+            <div class="mb-16">
+                <h3 class="text-2xl font-bold text-primary mb-8 text-center animate-slide-up">Dampak Sosial yang Diharapkan</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="impact-item bg-white p-6 rounded-xl shadow-soft border border-gray-200 text-center animate-fade-in" style="animation-delay: 0.1s">
+                        <div class="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center text-primary mx-auto mb-4 shadow-sm feature-icon">
+                            <i class="fas fa-baby text-2xl"></i>
+                        </div>
+                        <h4 class="text-lg font-semibold text-gray-800 mb-2">Anak Terpantau</h4>
+                        <p class="text-gray-600 text-sm">Pemantauan gizi rutin untuk 50 anak balita di Desa Sukarame</p>
+                        <div class="mt-4 bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-medium inline-block">
+                            <i class="fas fa-chart-line mr-1"></i> +95% Akurasi
+                        </div>
+                    </div>
+                    
+                    <div class="impact-item bg-white p-6 rounded-xl shadow-soft border border-gray-200 text-center animate-fade-in" style="animation-delay: 0.2s">
+                        <div class="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center text-primary mx-auto mb-4 shadow-sm feature-icon">
+                            <i class="fas fa-clock text-2xl"></i>
+                        </div>
+                        <h4 class="text-lg font-semibold text-gray-800 mb-2">Efisiensi</h4>
+                        <p class="text-gray-600 text-sm">Pengurangan waktu administrasi kader dari 3 jam menjadi 30 menit</p>
+                        <div class="mt-4 bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-medium inline-block">
+                            <i class="fas fa-tachometer-alt mr-1"></i> Lebih Cepat
+                        </div>
+                    </div>
+                    
+                    <div class="impact-item bg-white p-6 rounded-xl shadow-soft border border-gray-200 text-center animate-fade-in" style="animation-delay: 0.3s">
+                        <div class="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center text-primary mx-auto mb-4 shadow-sm feature-icon">
+                            <i class="fas fa-chart-line text-2xl"></i>
+                        </div>
+                        <h4 class="text-lg font-semibold text-gray-800 mb-2">Akurasi Data</h4>
+                        <p class="text-gray-600 text-sm">Peningkatan akurasi data pemantauan gizi dari 60% menjadi 95%</p>
+                        <div class="mt-4 bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-medium inline-block">
+                            <i class="fas fa-check-circle mr-1"></i> Terpercaya
+                        </div>
+                    </div>
+                    
+                    <div class="impact-item bg-white p-6 rounded-xl shadow-soft border border-gray-200 text-center animate-fade-in" style="animation-delay: 0.4s">
+                        <div class="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center text-primary mx-auto mb-4 shadow-sm feature-icon">
+                            <i class="fas fa-graduation-cap text-2xl"></i>
+                        </div>
+                        <h4 class="text-lg font-semibold text-gray-800 mb-2">Peningkatan Pengetahuan</h4>
+                        <p class="text-gray-600 text-sm">Peningkatan pemahaman ibu tentang gizi seimbang melalui edukasi</p>
+                        <div class="mt-4 bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-medium inline-block">
+                            <i class="fas fa-brain mr-1"></i> Lebih Pintar
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div>
+                <h3 class="text-2xl font-bold text-primary mb-8 text-center animate-slide-up">Roadmap Innovillage Sok!Anak</h3>
+                
+                <div class="bg-light-green/30 rounded-2xl p-8 animate-fade-in">
+                    <div class="flex flex-col md:flex-row justify-between items-center">
+                        <!-- Roadmap Steps -->
+                        <div class="roadmap-step bg-white p-6 rounded-xl shadow-card text-center mb-12 md:mb-0 w-full md:w-1/3 mx-4 animate-fade-in" style="animation-delay: 0.1s">
+                            <div class="w-16 h-16 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xl mx-auto mb-4 shadow-md feature-icon">2025</div>
+                            <h4 class="text-lg font-semibold text-gray-800 mb-3">Uji Coba & Penyempurnaan</h4>
+                            <p class="text-gray-600 text-sm">Fokus pada pembuktian efektivitas program di Desa Sukarame. Uji coba alat timbangan digital berbasis IoT dan penyempurnaan sistem.</p>
+                            <div class="mt-4 flex justify-center">
+                                <div class="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-medium">
+                                    <i class="fas fa-flask mr-1"></i> Tahap Uji Coba
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="roadmap-step bg-white p-6 rounded-xl shadow-card text-center mb-12 md:mb-0 w-full md:w-1/3 mx-4 animate-fade-in" style="animation-delay: 0.2s">
+                            <div class="w-16 h-16 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xl mx-auto mb-4 shadow-md feature-icon">2026</div>
+                            <h4 class="text-lg font-semibold text-gray-800 mb-3">Perluasan Dampak</h4>
+                            <p class="text-gray-600 text-sm">Menyebarkan teknologi dan pengalaman ke 3-5 desa tetangga yang menghadapi tantangan serupa. Pelatihan kader dan pendampingan intensif.</p>
+                            <div class="mt-4 flex justify-center">
+                                <div class="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-medium">
+                                    <i class="fas fa-expand-arrows-alt mr-1"></i> Tahap Perluasan
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="roadmap-step bg-white p-6 rounded-xl shadow-card text-center w-full md:w-1/3 mx-4 animate-fade-in" style="animation-delay: 0.3s">
+                            <div class="w-16 h-16 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xl mx-auto mb-4 shadow-md feature-icon">2027</div>
+                            <h4 class="text-lg font-semibold text-gray-800 mb-3">Kemandirian & Integrasi</h4>
+                            <p class="text-gray-600 text-sm">Integrasi program ke dalam sistem kesehatan kecamatan. Pengelolaan diserahkan kepada BUMDes dan Puskesmas dengan sistem subsidi silang.</p>
+                            <div class="mt-4 flex justify-center">
+                                <div class="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-medium">
+                                    <i class="fas fa-handshake mr-1"></i> Tahap Kemandirian
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Progress Bar -->
+                    <div class="mt-12 animate-fade-in" style="animation-delay: 0.4s">
+                        <div class="flex justify-between mb-2">
+                            <span class="text-sm font-medium text-primary">Progress Implementasi</span>
+                            <span class="text-sm font-medium text-primary" id="progress-percent">25%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-4">
+                            <div id="progress-bar" class="bg-primary h-4 rounded-full transition-all duration-1000" style="width: 25%"></div>
+                        </div>
+                        <div class="flex justify-between mt-2">
+                            <span class="text-xs text-gray-500">2025: Uji Coba</span>
+                            <span class="text-xs text-gray-500">2026: Perluasan</span>
+                            <span class="text-xs text-gray-500">2027: Kemandirian</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-16 bg-gradient-to-r from-primary to-primary-dark rounded-2xl p-10 text-white text-center shadow-card animate-slide-up">
+                <h3 class="text-2xl font-bold mb-4">Bergabung dengan Inovasi Kami</h3>
+                <p class="text-white/90 mb-6 max-w-2xl mx-auto text-lg">Mari bersama wujudkan desa bebas stunting dengan teknologi yang tepat guna dan berkelanjutan</p>
+                <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-6">
+                    <a href="#demo" class="bg-white text-primary hover:bg-gray-100 font-semibold py-3 px-8 rounded-lg transition flex items-center justify-center shadow-md transform hover:-translate-y-1">
+                        <i class="fas fa-play-circle mr-2"></i> Coba Demo
+                    </a>
+                    <a href="#" class="border-2 border-white text-white hover:bg-white/10 font-semibold py-3 px-8 rounded-lg transition flex items-center justify-center transform hover:-translate-y-1">
+                        <i class="fas fa-comments mr-2"></i> Diskusi Komunitas
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark-green text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <h3 class="text-lg font-semibold mb-4 flex items-center">
+                        <i class="fas fa-child mr-3 text-secondary"></i> Sok!Anak
+                    </h3>
+                    <p class="text-gray-300 mb-4">Sistem monitoring gizi anak berbasis AI yang terintegrasi dengan timbangan digital untuk deteksi dini dan pencegahan stunting.</p>
+                    <p class="text-gray-300">Inovasi Desa Sukarame untuk Indonesia bebas stunting.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Tautan Cepat</h3>
+                    <ul class="space-y-3">
+                        <li><a href="#home" class="text-gray-300 hover:text-white transition flex items-center"><i class="fas fa-chevron-right mr-2 text-secondary text-xs"></i> Beranda</a></li>
+                        <li><a href="#masalah" class="text-gray-300 hover:text-white transition flex items-center"><i class="fas fa-chevron-right mr-2 text-secondary text-xs"></i> Masalah</a></li>
+                        <li><a href="#solusi" class="text-gray-300 hover:text-white transition flex items-center"><i class="fas fa-chevron-right mr-2 text-secondary text-xs"></i> Solusi</a></li>
+                        <li><a href="#fitur" class="text-gray-300 hover:text-white transition flex items-center"><i class="fas fa-chevron-right mr-2 text-secondary text-xs"></i> Fitur</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Kontak</h3>
+                    <ul class="space-y-3 text-gray-300">
+                        <li class="flex items-center">
+                            <i class="fas fa-map-marker-alt mr-3 text-secondary"></i> 
+                            <span>Desa Sukarame, Kec. Pacet, Kab. Bandung</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-envelope mr-3 text-secondary"></i> 
+                            <span>info@sokianak.id</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-globe mr-3 text-secondary"></i> 
+                            <span>www.sokianak.id</span>
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Innovillage 2025</h3>
+                    <p class="text-gray-300 mb-4">Sok!Anak merupakan bagian dari program Social Project Program Innovillage 2025.</p>
+                    <div class="flex space-x-3">
+                        <a href="#" class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white hover:bg-primary-light transition shadow-sm transform hover:-translate-y-1">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white hover:bg-primary-light transition shadow-sm transform hover:-translate-y-1">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white hover:bg-primary-light transition shadow-sm transform hover:-translate-y-1">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="pt-8 border-t border-gray-700 text-center text-gray-400">
+                <p>&copy; 2025 AIoT Sok!Anak - Inovasi Desa Sukarame. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+
+        // Problem Chart
+        const problemCtx = document.getElementById('problemChart').getContext('2d');
+        const problemChart = new Chart(problemCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Normal', 'Risiko Stunting', 'Stunting'],
+                datasets: [{
+                    data: [32, 10, 8],
+                    backgroundColor: [
+                        '#10b981',
+                        '#f59e0b',
+                        '#ef4444'
+                    ],
+                    borderWidth: 0,
+                    hoverOffset: 10
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            usePointStyle: true,
+                            padding: 15
+                        }
+                    }
+                },
+                cutout: '65%'
+            }
+        });
+
+        // Carousel Functionality
+        let currentCarouselIndex = 0;
+        const carouselItems = document.querySelectorAll('.carousel-item');
+        const carouselIndicators = document.querySelectorAll('.carousel-indicator');
+        const carouselPrev = document.querySelector('.carousel-prev');
+        const carouselNext = document.querySelector('.carousel-next');
+
+        function showCarouselItem(index) {
+            // Hide all items
+            carouselItems.forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Remove active class from all indicators
+            carouselIndicators.forEach(indicator => {
+                indicator.classList.remove('bg-primary');
+                indicator.classList.add('bg-primary/30');
+            });
+            
+            // Show selected item
+            carouselItems[index].classList.add('active');
+            
+            // Update active indicator
+            carouselIndicators[index].classList.remove('bg-primary/30');
+            carouselIndicators[index].classList.add('bg-primary');
+            
+            currentCarouselIndex = index;
+        }
+
+        // Initialize carousel
+        showCarouselItem(0);
+
+        // Carousel navigation
+        carouselPrev.addEventListener('click', function() {
+            let newIndex = currentCarouselIndex - 1;
+            if (newIndex < 0) newIndex = carouselItems.length - 1;
+            showCarouselItem(newIndex);
+        });
+
+        carouselNext.addEventListener('click', function() {
+            let newIndex = currentCarouselIndex + 1;
+            if (newIndex >= carouselItems.length) newIndex = 0;
+            showCarouselItem(newIndex);
+        });
+
+        // Indicator clicks
+        carouselIndicators.forEach((indicator, index) => {
+            indicator.addEventListener('click', function() {
+                showCarouselItem(index);
+            });
+        });
+
+        // Auto-advance carousel
+        setInterval(() => {
+            let newIndex = currentCarouselIndex + 1;
+            if (newIndex >= carouselItems.length) newIndex = 0;
+            showCarouselItem(newIndex);
+        }, 5000);
+
+        // Progress Bar Animation
+        const progressBar = document.getElementById('progress-bar');
+        const progressPercent = document.getElementById('progress-percent');
+        
+        // Simulate progress based on current year
+        function updateProgress() {
+            const currentYear = new Date().getFullYear();
+            let progress = 0;
+            
+            if (currentYear < 2025) {
+                progress = 0;
+            } else if (currentYear === 2025) {
+                progress = 25;
+            } else if (currentYear === 2026) {
+                progress = 60;
+            } else {
+                progress = 100;
+            }
+            
+            progressBar.style.width = `${progress}%`;
+            progressPercent.textContent = `${progress}%`;
+        }
+        
+        updateProgress();
+
+        // Scroll progress indicator
+        window.onscroll = function() {
+            updateProgressBar();
+            updateBackToTopButton();
+            updateActiveSection();
+        };
+
+        function updateProgressBar() {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById("progressBar").style.width = scrolled + "%";
+        }
+
+        // Back to top button
+        const backToTopButton = document.getElementById('backToTop');
+        
+        function updateBackToTopButton() {
+            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                backToTopButton.classList.add('show');
+            } else {
+                backToTopButton.classList.remove('show');
+            }
+        }
+
+        backToTopButton.addEventListener('click', function() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // Update active section based on scroll position
+        function updateActiveSection() {
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (window.scrollY >= (sectionTop - 100)) {
+                    current = section.getAttribute('id');
+                }
+            });
+            
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active');
+                }
+            });
+            
+            // Update Alpine.js state
+            if (window.Alpine && window.Alpine.evaluate) {
+                window.Alpine.evaluate(document.body, 'activeSection', current);
+            }
+        }
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fade-in');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        // Observe elements for animation
+        document.addEventListener('DOMContentLoaded', function() {
+            const elementsToAnimate = document.querySelectorAll('.animate-on-scroll');
+            elementsToAnimate.forEach(el => {
+                observer.observe(el);
+            });
+        });
+
+        // Add loading state to buttons
+        document.querySelectorAll('a[href="#demo"]').forEach(button => {
+            button.addEventListener('click', function(e) {
+                if (this.getAttribute('href') === '#demo') {
+                    e.preventDefault();
+                    const originalText = this.innerHTML;
+                    this.innerHTML = '<div class="loader"></div> Memuat...';
+                    
+                    setTimeout(() => {
+                        this.innerHTML = originalText;
+                        // Scroll to demo section
+                        document.getElementById('demo').scrollIntoView({ behavior: 'smooth' });
+                    }, 1500);
+                }
+            });
+        });
+
+        // Add interactive hover effects to cards
+        document.querySelectorAll('.interactive-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px)';
+                this.style.boxShadow = '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = '';
+            });
+        });
+
+        // Add tooltip functionality
+        document.querySelectorAll('.tooltip').forEach(tooltip => {
+            tooltip.addEventListener('mouseenter', function() {
+                const tooltipText = this.getAttribute('data-tooltip');
+                if (tooltipText) {
+                    // Create tooltip element
+                    const tooltipEl = document.createElement('div');
+                    tooltipEl.className = 'absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-sm rounded-md whitespace-nowrap z-50';
+                    tooltipEl.textContent = tooltipText;
+                    
+                    // Position tooltip
+                    this.style.position = 'relative';
+                    this.appendChild(tooltipEl);
+                    
+                    // Remove tooltip on mouse leave
+                    this.addEventListener('mouseleave', function() {
+                        tooltipEl.remove();
+                    }, { once: true });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

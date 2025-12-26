@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sok!Anak - Gallery Mockup Aplikasi</title>
+    <link rel="icon" type="image/x-icon" href="assets/logo.jpeg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@2.7.0/css/lightgallery-bundle.css" />
+    <link rel="stylesheet" href="css/gallery.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2E7D32',
+                        'primary-light': '#4CAF50',
+                        'primary-dark': '#1B5E20',
+                        secondary: '#FF9800',
+                        accent: '#2196F3',
+                        'dark-green': '#1B5E20',
+                        'light-green': '#E8F5E9',
+                        'soft-green': '#F1F8E9'
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                        'card': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                        'glow': '0 0 20px rgba(46, 125, 50, 0.15)'
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-up': 'slideUp 0.5s ease-out',
+                        'pulse-soft': 'pulseSoft 2s infinite',
+                        'bounce-soft': 'bounceSoft 2s infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' }
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' }
+                        },
+                        pulseSoft: {
+                            '0%, 100%': { opacity: '1' },
+                            '50%': { opacity: '0.8' }
+                        },
+                        bounceSoft: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-5px)' }
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-20px)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans" x-data="{ mobileMenuOpen: false, activeSection: 'gallery' }">
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-50 transition-all duration-300" id="header">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-primary rounded-xl p-2 shadow-md">
+                        <img src="assets/logo.jpeg" alt="Sok!Anak Logo" class="w-8 h-8 rounded-lg">
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-primary">Sok!Anak</h1>
+                        <p class="text-xs text-gray-500">Solusi Digital Pemantauan Gizi</p>
+                    </div>
+                </div>
+                <nav class="hidden lg:flex space-x-8">
+                    <a href="index.html" class="nav-link text-gray-600 font-medium">Beranda</a>
+                    <a href="index.html#tentang" class="nav-link text-gray-600 font-medium">Tentang</a>
+                    <a href="index.html#timeline" class="nav-link text-gray-600 font-medium">Timeline</a>
+                    <a href="index.html#dukungan" class="nav-link text-gray-600 font-medium">Dukungan</a>
+                    <a href="gallery.html" class="nav-link text-primary font-medium active">Galeri Mockup</a>
+                </nav>
+                <div class="flex items-center space-x-4">
+                    <a href="index.html#timeline" class="bg-primary hover:bg-primary-dark text-white font-medium py-2 px-4 rounded-lg transition shadow-sm transform hover:-translate-y-1">Progress</a>
+                    <div class="lg:hidden">
+                        <i class="fas fa-bars text-xl text-primary cursor-pointer" @click="mobileMenuOpen = !mobileMenuOpen"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div class="lg:hidden bg-white py-4 px-4 shadow-md border-t transition-all duration-300" x-show="mobileMenuOpen" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform -translate-y-2" x-transition:enter-end="opacity-100 transform translate-y-0" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 transform translate-y-0" x-transition:leave-end="opacity-0 transform -translate-y-2">
+            <div class="flex flex-col space-y-4">
+                <a href="index.html" class="py-2 px-3 rounded-lg hover:bg-gray-100 transition font-medium flex items-center">
+                    <i class="fas fa-home mr-3"></i> Beranda
+                </a>
+                <a href="index.html#tentang" class="py-2 px-3 rounded-lg hover:bg-gray-100 transition font-medium flex items-center">
+                    <i class="fas fa-info-circle mr-3"></i> Tentang
+                </a>
+                <a href="index.html#timeline" class="py-2 px-3 rounded-lg hover:bg-gray-100 transition font-medium flex items-center">
+                    <i class="fas fa-chart-line mr-3"></i> Timeline
+                </a>
+                <a href="index.html#dukungan" class="py-2 px-3 rounded-lg hover:bg-gray-100 transition font-medium flex items-center">
+                    <i class="fas fa-handshake mr-3"></i> Dukungan
+                </a>
+                <a href="gallery.html" class="py-2 px-3 rounded-lg bg-primary/10 text-primary font-medium flex items-center">
+                    <i class="fas fa-images mr-3"></i> Galeri Mockup
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section Gallery -->
+    <section class="hero-gradient text-white py-12 md:py-16 relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-full h-full overflow-hidden opacity-10">
+            <div class="absolute -top-10 -left-10 w-40 h-40 rounded-full bg-white"></div>
+            <div class="absolute top-1/4 right-10 w-20 h-20 rounded-full bg-white"></div>
+            <div class="absolute bottom-10 left-1/4 w-32 h-32 rounded-full bg-white"></div>
+        </div>
+        
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="text-center max-w-3xl mx-auto animate-slide-up">
+                <h1 class="text-3xl md:text-4xl font-bold mb-4">Galeri Mockup Aplikasi Sok!Anak</h1>
+                <p class="text-lg md:text-xl mb-6 text-white/90">Preview antarmuka aplikasi web Sok!Anak yang sedang dalam pengembangan.</p>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <div class="bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2 border border-white/20">
+                        <span class="font-medium">Dashboard Real-time</span>
+                    </div>
+                    <div class="bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2 border border-white/20">
+                        <span class="font-medium">Input Pengukuran Otomatis</span>
+                    </div>
+                    <div class="bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2 border border-white/20">
+                        <span class="font-medium">Analisis AI</span>
+                    </div>
+                    <div class="bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2 border border-white/20">
+                        <span class="font-medium">Rekomendasi Personal</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section class="py-16 gallery-gradient">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Dashboard Mockup -->
+                <div class="animate-fade-in interactive-card bg-white rounded-xl shadow-card overflow-hidden">
+                    <div class="gallery-item lightgallery" data-src="assets/img/dashboard.png">
+                        <img src="assets/img/mockup/dashboard.png" alt="Dashboard Sok!Anak" class="gallery-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="gallery-overlay">
+                            <h3 class="text-lg font-bold">Dashboard Utama</h3>
+                            <p class="text-sm text-white/90">Tampilan dashboard dengan statistik real-time kondisi gizi anak</p>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-3">
+                            <h3 class="text-xl font-bold text-primary">Dashboard Utama</h3>
+                            <span class="bg-primary/10 text-primary text-xs font-medium px-2 py-1 rounded-full">Fitur Utama</span>
+                        </div>
+                        <p class="text-gray-600 mb-4">Dashboard yang menampilkan statistik real-time di wilayah kerja Posyandu.</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="bg-gray-100 text-gray-700 text-xs px-3 py-1 rounded-full">Statistik Real-time</span>
+                            <span class="bg-gray-100 text-gray-700 text-xs px-3 py-1 rounded-full">Grafik Interaktif</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Data Anak Lengkap -->
+                <div class="animate-fade-in interactive-card bg-white rounded-xl shadow-card overflow-hidden" style="animation-delay: 0.1s">
+                    <div class="gallery-item lightgallery" data-src="assets/img/data-anak.png">
+                        <img src="assets/img/mockup/data-anak.png" alt="Data Anak Lengkap" class="gallery-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="gallery-overlay">
+                            <h3 class="text-lg font-bold">Data Anak Lengkap</h3>
+                            <p class="text-sm text-white/90">Halaman detail data anak dengan riwayat pengukuran lengkap</p>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-3">
+                            <h3 class="text-xl font-bold text-primary">Data Anak Lengkap</h3>
+                            <span class="bg-accent/10 text-accent text-xs font-medium px-2 py-1 rounded-full">Database</span>
+                        </div>
+                        <p class="text-gray-600 mb-4">Halaman detail yang menampilkan informasi lengkap tentang setiap anak.</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="bg-gray-100 text-gray-700 text-xs px-3 py-1 rounded-full">Profil Lengkap</span>
+                            <span class="bg-gray-100 text-gray-700 text-xs px-3 py-1 rounded-full">Riwayat Kesehatan</span>
+                            <span class="bg-gray-100 text-gray-700 text-xs px-3 py-1 rounded-full">Foto Progress</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Input Pengukuran Otomatis -->
+                <div class="animate-fade-in interactive-card bg-white rounded-xl shadow-card overflow-hidden" style="animation-delay: 0.2s">
+                    <div class="gallery-item lightgallery" data-src="assets/img/input-pengukuran.png">
+                        <img src="assets/img/mockup/input-pengukuran.png" alt="Input Pengukuran Otomatis" class="gallery-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="gallery-overlay">
+                            <h3 class="text-lg font-bold">Input Pengukuran Otomatis</h3>
+                            <p class="text-sm text-white/90">Interface input data pengukuran dari timbangan digital IoT</p>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-3">
+                            <h3 class="text-xl font-bold text-primary">Input Pengukuran Otomatis</h3>
+                            <span class="bg-secondary/10 text-secondary text-xs font-medium px-2 py-1 rounded-full">IoT</span>
+                        </div>
+                        <p class="text-gray-600 mb-4">Data berat badan dan tinggi badan dikirim secara otomatis dari perangkat IoT ke sistem.</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="bg-gray-100 text-gray-700 text-xs px-3 py-1 rounded-full">Input Otomatis</span>
+                            <span class="bg-gray-100 text-gray-700 text-xs px-3 py-1 rounded-full">Validasi Data</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Riwayat Pengukuran dengan Grafik -->
+                <div class="animate-fade-in interactive-card bg-white rounded-xl shadow-card overflow-hidden" style="animation-delay: 0.3s">
+                    <div class="gallery-item lightgallery" data-src="assets/img/riwayat-pengukuran.png">
+                        <img src="assets/img/mockup/riwayat-pengukuran.png" alt="Riwayat Pengukuran dengan Grafik" class="gallery-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="gallery-overlay">
+                            <h3 class="text-lg font-bold">Riwayat Pengukuran</h3>
+                            <p class="text-sm text-white/90">Grafik perkembangan status gizi anak dari waktu ke waktu</p>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-3">
+                            <h3 class="text-xl font-bold text-primary">Riwayat Pengukuran dengan Grafik</h3>
+                            <span class="bg-primary/10 text-primary text-xs font-medium px-2 py-1 rounded-full">Visualisasi</span>
+                        </div>
+                        <p class="text-gray-600 mb-4">Melacak perkembangan status gizi anak dari waktu ke waktu.</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="bg-gray-100 text-gray-700 text-xs px-3 py-1 rounded-full">Grafik Interaktif</span>
+                            <span class="bg-gray-100 text-gray-700 text-xs px-3 py-1 rounded-full">Perbandingan Z-Score</span>
+                            <span class="bg-gray-100 text-gray-700 text-xs px-3 py-1 rounded-full">Trend Analysis</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analisis Status Gizi Lengkap -->
+                <div class="animate-fade-in interactive-card bg-white rounded-xl shadow-card overflow-hidden" style="animation-delay: 0.4s">
+                    <div class="gallery-item lightgallery" data-src="assets/img/analisis-gizi.png">
+                        <img src="assets/img/mockup/analisis-status-gizi.jpeg" alt="Analisis Status Gizi Lengkap" class="gallery-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="gallery-overlay">
+                            <h3 class="text-lg font-bold">Analisis Status Gizi</h3>
+                            <p class="text-sm text-white/90">Halaman analisis mendalam status gizi anak berdasarkan standar WHO</p>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-3">
+                            <h3 class="text-xl font-bold text-primary">Analisis Status Gizi Lengkap</h3>
+                            <span class="bg-accent/10 text-accent text-xs font-medium px-2 py-1 rounded-full">Analisis</span>
+                        </div>
+                        <p class="text-gray-600 mb-4">Status gizi anak berdasarkan parameter WHO (berat badan/umur, tinggi badan/umur, berat badan/tinggi badan).</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="bg-gray-100 text-gray-700 text-xs px-3 py-1 rounded-full">Parameter WHO</span>
+                            <span class="bg-gray-100 text-gray-700 text-xs px-3 py-1 rounded-full">Klasifikasi Status</span>
+                            <span class="bg-gray-100 text-gray-700 text-xs px-3 py-1 rounded-full">Rekomendasi Awal</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rekomendasi Detail dengan AI -->
+                <div class="animate-fade-in interactive-card bg-white rounded-xl shadow-card overflow-hidden" style="animation-delay: 0.5s">
+                    <div class="gallery-item lightgallery" data-src="assets/img/rekomendasi-ai.png">
+                        <img src="assets/img/mockup/rekomendasi-tindakan.png" alt="Rekomendasi Detail dengan AI" class="gallery-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="gallery-overlay">
+                            <h3 class="text-lg font-bold">Rekomendasi AI</h3>
+                            <p class="text-sm text-white/90">Rekomendasi personal dari sistem AI berdasarkan kondisi anak</p>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-3">
+                            <h3 class="text-xl font-bold text-primary">Rekomendasi Detail dengan AI</h3>
+                            <span class="bg-secondary/10 text-secondary text-xs font-medium px-2 py-1 rounded-full">AI</span>
+                        </div>
+                        <p class="text-gray-600 mb-4">Rekomendasi meliputi pola makan, aktivitas, dan intervensi yang diperlukan.</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="bg-gray-100 text-gray-700 text-xs px-3 py-1 rounded-full">Rekomendasi Personal</span>
+                            <span class="bg-gray-100 text-gray-700 text-xs px-3 py-1 rounded-full">Pola Makan</span>
+                            <span class="bg-gray-100 text-gray-700 text-xs px-3 py-1 rounded-full">Monitoring Lanjutan</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Info Section -->
+            <div class="mt-16 bg-gradient-to-r from-primary to-primary-dark rounded-2xl p-10 text-white text-center shadow-card animate-slide-up">
+                <h3 class="text-2xl font-bold mb-4">Tentang Mockup Aplikasi Sok!Anak</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white/10 p-6 rounded-xl backdrop-blur-sm">
+                        <div class="text-3xl font-bold text-secondary mb-2">User-Friendly</div>
+                        <h4 class="text-lg font-semibold mb-3">Desain Ramah Pengguna</h4>
+                        <p class="text-white/80 text-sm">Antarmuka yang intuitif dan mudah digunakan oleh kader Posyandu dengan berbagai tingkat kemampuan teknologi</p>
+                    </div>
+                    <div class="bg-white/10 p-6 rounded-xl backdrop-blur-sm">
+                        <div class="text-3xl font-bold text-secondary mb-2">Real-time</div>
+                        <h4 class="text-lg font-semibold mb-3">Data Real-time</h4>
+                        <p class="text-white/80 text-sm">Dashboard yang menampilkan data real-time untuk memantau kondisi gizi anak secara langsung</p>
+                    </div>
+                    <div class="bg-white/10 p-6 rounded-xl backdrop-blur-sm">
+                        <div class="text-3xl font-bold text-secondary mb-2">AI-Powered</div>
+                        <h4 class="text-lg font-semibold mb-3">Analisis Berbasis AI</h4>
+                        <p class="text-white/80 text-sm">Sistem AI yang memberikan analisis status gizi dan rekomendasi personal berdasarkan data antropometri</p>
+                    </div>
+                </div>
+                <div class="mt-8">
+                    <a href="index.html#timeline" class="bg-secondary hover:bg-amber-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition transform hover:-translate-y-1 inline-flex items-center">
+                        <i class="fas fa-calendar-alt mr-2"></i> Lihat Timeline Pengembangan
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark-green text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <h3 class="text-lg font-semibold mb-4 flex items-center">
+                        <i class="fas fa-child mr-3 text-secondary"></i> Sok!Anak
+                    </h3>
+                    <p class="text-gray-300 mb-4">Sistem Pemantauan Gizi dan Intervensi Dini Berbasis IoT & AI.</p>
+                    <p class="text-gray-300">Inovasi Desa Sukarame untuk Indonesia bebas stunting.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Tautan Cepat</h3>
+                    <ul class="space-y-3">
+                        <li><a href="#home" class="text-gray-300 hover:text-white transition flex items-center"><i class="fas fa-chevron-right mr-2 text-secondary text-xs"></i> Beranda</a></li>
+                        <li><a href="#tentang" class="text-gray-300 hover:text-white transition flex items-center"><i class="fas fa-chevron-right mr-2 text-secondary text-xs"></i> Tentang</a></li>
+                        <li><a href="#timeline" class="text-gray-300 hover:text-white transition flex items-center"><i class="fas fa-chevron-right mr-2 text-secondary text-xs"></i> Timeline</a></li>
+                        <li><a href="#dukungan" class="text-gray-300 hover:text-white transition flex items-center"><i class="fas fa-chevron-right mr-2 text-secondary text-xs"></i> Dukungan</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Kontak</h3>
+                    <ul class="space-y-3 text-gray-300">
+                        <li class="flex items-center">
+                            <i class="fas fa-map-marker-alt mr-3 text-secondary"></i> 
+                            <span>Desa Sukarame, Kec. Pacet, Kab. Bandung</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-envelope mr-3 text-secondary"></i> 
+                            <span>sokanak@duck.com</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-globe mr-3 text-secondary"></i> 
+                            <span>sok-anak.github.io</span>
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Innovillage 2025</h3>
+                    <p class="text-gray-300 mb-4">Sok!Anak merupakan bagian dari program sosial proyek Innovillage 2025.</p>
+                    <div class="flex space-x-3">
+                        <a href="https://www.instagram.com/aiot_sokanak" target="_blank" class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white hover:bg-primary-light transition shadow-sm transform hover:-translate-y-1">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="https://youtube.com/@aiotsokanak?si=_OQOhr5FkmBJ8uZP" target="_blank" class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white hover:bg-primary-light transition shadow-sm transform hover:-translate-y-1">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="pt-8 border-t border-gray-700 text-center text-gray-400">
+                <p>&copy; AIoT Sok!Anak - Inovasi Desa Sukarame. All rights reserved.</p>
+                <p class="mt-2 text-sm">Sok!Anak sedang dalam tahap pengembangan aktif. Target implementasi: Q1 2026.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- LightGallery Script -->
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery@2.7.0/lightgallery.min.js"></script>
+    <script src="js/gallery.js"></script>
+</body>
+</html>

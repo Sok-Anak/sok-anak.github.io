@@ -83,13 +83,14 @@
                     </div>
                 </div>
                 <nav class="hidden lg:flex space-x-8">
-                    <a href="#home" class="nav-link text-primary font-medium" :class="{ 'active': activeSection === 'home' }" @click="activeSection = 'home'">Beranda</a>
-                    <a href="#tentang" class="nav-link text-gray-600 font-medium" :class="{ 'active': activeSection === 'tentang' }" @click="activeSection = 'tentang'">Tentang</a>
-                    <a href="#timeline" class="nav-link text-gray-600 font-medium" :class="{ 'active': activeSection === 'timeline' }" @click="activeSection = 'timeline'">Timeline</a>
-                    <a href="#dukungan" class="nav-link text-gray-600 font-medium" :class="{ 'active': activeSection === 'dukungan' }" @click="activeSection = 'dukungan'">Dukungan</a>
+                    <a href="index.html" class="nav-link text-gray-600 font-medium">Beranda</a>
+                    <a href="index.html#tentang" class="nav-link text-gray-600 font-medium">Tentang</a>
+                    <a href="index.html#timeline" class="nav-link text-gray-600 font-medium">Timeline</a>
+                    <a href="index.html#dukungan" class="nav-link text-gray-600 font-medium">Dukungan</a>
+                    <a href="gallery.html" class="nav-link text-gray-600 font-medium">Galeri Mockup</a>
                 </nav>
                 <div class="flex items-center space-x-4">
-                    <a href="#timeline" class="bg-primary hover:bg-primary-dark text-white font-medium py-2 px-4 rounded-lg transition shadow-sm transform hover:-translate-y-1">Progress</a>
+                    <a href="index.html#timeline" class="bg-primary hover:bg-primary-dark text-white font-medium py-2 px-4 rounded-lg transition shadow-sm transform hover:-translate-y-1">Progress</a>
                     <div class="lg:hidden">
                         <i class="fas fa-bars text-xl text-primary cursor-pointer" @click="mobileMenuOpen = !mobileMenuOpen"></i>
                     </div>
@@ -100,17 +101,20 @@
         <!-- Mobile Menu -->
         <div class="lg:hidden bg-white py-4 px-4 shadow-md border-t transition-all duration-300" x-show="mobileMenuOpen" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform -translate-y-2" x-transition:enter-end="opacity-100 transform translate-y-0" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 transform translate-y-0" x-transition:leave-end="opacity-0 transform -translate-y-2">
             <div class="flex flex-col space-y-4">
-                <a href="#home" class="py-2 px-3 rounded-lg bg-primary/10 text-primary font-medium flex items-center" @click="mobileMenuOpen = false; activeSection = 'home'">
+                <a href="index.html" class="py-2 px-3 rounded-lg hover:bg-gray-100 transition font-medium flex items-center">
                     <i class="fas fa-home mr-3"></i> Beranda
                 </a>
-                <a href="#tentang" class="py-2 px-3 rounded-lg hover:bg-gray-100 transition font-medium flex items-center" @click="mobileMenuOpen = false; activeSection = 'tentang'">
+                <a href="index.html#tentang" class="py-2 px-3 rounded-lg hover:bg-gray-100 transition font-medium flex items-center">
                     <i class="fas fa-info-circle mr-3"></i> Tentang
                 </a>
-                <a href="#timeline" class="py-2 px-3 rounded-lg hover:bg-gray-100 transition font-medium flex items-center" @click="mobileMenuOpen = false; activeSection = 'timeline'">
+                <a href="index.html#timeline" class="py-2 px-3 rounded-lg hover:bg-gray-100 transition font-medium flex items-center">
                     <i class="fas fa-chart-line mr-3"></i> Timeline
                 </a>
-                <a href="#dukungan" class="py-2 px-3 rounded-lg hover:bg-gray-100 transition font-medium flex items-center" @click="mobileMenuOpen = false; activeSection = 'dukungan'">
+                <a href="index.html#dukungan" class="py-2 px-3 rounded-lg hover:bg-gray-100 transition font-medium flex items-center">
                     <i class="fas fa-handshake mr-3"></i> Dukungan
+                </a>
+                <a href="gallery.html" class="py-2 px-3 rounded-lg hover:bg-gray-100 transition font-medium flex items-center">
+                    <i class="fas fa-images mr-3"></i> Galeri Mockup
                 </a>
             </div>
         </div>
@@ -141,7 +145,7 @@
                             </div>
                             <div>
                                 <h3 class="text-xl font-bold">Status: Pengembangan Hardware & Software</h3>
-                                <p class="text-white/80">Tim kami sedang mengembangkan timbangan digital dan sistem AI</p>
+                                <p class="text-white/80">Tim kami sedang mengembangkan alat pengukuran digital dan sistem AI</p>
                             </div>
                         </div>
                         
@@ -158,8 +162,8 @@
                         <a href="#tentang" class="bg-secondary hover:bg-amber-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition transform hover:-translate-y-1 flex items-center justify-center animate-bounce-soft">
                             <i class="fas fa-info-circle mr-2"></i> Pelajari Lebih Lanjut
                         </a>
-                        <a href="#timeline" class="border-2 border-white hover:bg-white/10 text-white font-semibold py-3 px-6 rounded-lg transition flex items-center justify-center transform hover:-translate-y-1">
-                            <i class="fas fa-calendar-alt mr-2"></i> Lihat Timeline
+                        <a href="gallery.html" class="border-2 border-white hover:bg-white/10 text-white font-semibold py-3 px-6 rounded-lg transition flex items-center justify-center transform hover:-translate-y-1">
+                            <i class="fas fa-images mr-2"></i> Lihat Mockup
                         </a>
                     </div>
                 </div>
@@ -167,7 +171,7 @@
                     <div class="relative w-full max-w-md floating development-pulse">
                         <div class="glass-effect rounded-2xl p-6 shadow-2xl interactive-card">
                             <div class="flex justify-between items-center mb-6">
-                                <h3 class="text-xl font-bold">Timbangan Digital Sok!Anak</h3>
+                                <h3 class="text-xl font-bold">Alat Pengukuran Digital</h3>
                                 <div class="bg-primary-light rounded-full px-3 py-1 text-xs font-medium shadow-sm">IoT & AI</div>
                             </div>
                             <div class="bg-white/20 rounded-xl p-4 mb-4 shadow-md flex justify-center items-center h-48">
@@ -202,20 +206,18 @@
         <div class="container mx-auto px-4">
             <div class="text-center mb-16 animate-slide-up">
                 <h2 class="text-3xl font-bold text-primary mb-4">Tentang Sok!Anak</h2>
-                <p class="text-gray-600 max-w-2xl mx-auto text-lg">Inovasi Desa Sukarame untuk deteksi dini dan pencegahan stunting berbasis IoT & AI</p>
             </div>
             
             <div class="flex flex-col lg:flex-row items-center justify-between gap-12 mb-16">
                 <div class="lg:w-1/2 animate-slide-up">
                     <h3 class="text-2xl font-bold text-primary mb-6">Solusi Inovatif untuk Tantangan Stunting</h3>
-                    <p class="text-gray-700 mb-6">Sok!Anak adalah sistem pemantauan gizi anak berbasis IoT & AI yang dikembangkan untuk Posyandu di Desa Sukarame, Kabupaten Bandung. Sistem ini dirancang untuk mengatasi tantangan stunting melalui:</p>
                     
                     <ul class="space-y-4 text-gray-700 mb-8">
                         <li class="flex items-start animate-fade-in" style="animation-delay: 0.1s">
                             <div class="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary mt-1 mr-3 flex-shrink-0">
                                 <i class="fas fa-check text-xs"></i>
                             </div>
-                            <span><strong class="text-primary">Timbangan digital pintar</strong> dengan desain ramah anak</span>
+                            <span><strong class="text-primary">Alat pengukuran digital</strong> dengan desain ramah anak</span>
                         </li>
                         <li class="flex items-start animate-fade-in" style="animation-delay: 0.2s">
                             <div class="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary mt-1 mr-3 flex-shrink-0">
@@ -348,7 +350,6 @@
         <div class="container mx-auto px-4">
             <div class="text-center mb-16 animate-slide-up">
                 <h2 class="text-3xl font-bold text-primary mb-4">Timeline Pengembangan</h2>
-                <p class="text-gray-600 max-w-2xl mx-auto text-lg">Jadwal dan progress pengembangan Sok!Anak menuju implementasi di Desa Sukarame</p>
             </div>
             
             <div class="max-w-4xl mx-auto">
@@ -391,7 +392,7 @@
                         <div class="relative flex flex-col md:flex-row items-center animate-fade-in" style="animation-delay: 0.2s">
                             <div class="flex-1 md:text-right md:pr-8 mb-4 md:mb-0 order-2 md:order-1">
                                 <h3 class="text-xl font-semibold text-primary mb-2">Perancangan Sistem & Prototype</h3>
-                                <p class="text-gray-600">Merancang arsitektur sistem, antarmuka pengguna, dan prototype timbangan digital</p>
+                                <p class="text-gray-600">Merancang arsitektur sistem, antarmuka pengguna, dan prototype alat pengukuran digital</p>
                                 <div class="mt-2 inline-flex items-center bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
                                     <i class="fas fa-check-circle mr-1"></i> Selesai
                                 </div>
@@ -408,7 +409,7 @@
                         <div class="relative flex flex-col md:flex-row items-center animate-fade-in" style="animation-delay: 0.3s">
                             <div class="flex-1 md:text-right md:pr-8 mb-4 md:mb-0 order-2 md:order-1">
                                 <h3 class="text-xl font-semibold text-primary mb-2">Pengembangan Hardware & Software</h3>
-                                <p class="text-gray-600">Membangun timbangan digital dengan ESP32, sensor, dan mengembangkan aplikasi web</p>
+                                <p class="text-gray-600">Membangun alat pengukuran digital dengan ESP32, sensor, dan mengembangkan aplikasi web</p>
                                 <div class="mt-2 inline-flex items-center bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
                                     <i class="fas fa-cog fa-spin mr-1"></i> Dalam Proses
                                 </div>
@@ -460,7 +461,6 @@
             
             <div class="mt-16 bg-gradient-to-r from-primary to-primary-dark rounded-2xl p-10 text-white text-center shadow-card animate-slide-up">
                 <h3 class="text-2xl font-bold mb-4">Roadmap Jangka Panjang</h3>
-                <p class="text-white/90 mb-6 max-w-2xl mx-auto text-lg">Setelah implementasi di Desa Sukarame, Sok!Anak akan dikembangkan lebih lanjut untuk menjangkau lebih banyak desa</p>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div class="bg-white/10 p-6 rounded-xl backdrop-blur-sm">
                         <div class="text-3xl font-bold text-secondary mb-2">2025</div>
@@ -487,7 +487,6 @@
         <div class="container mx-auto px-4">
             <div class="text-center mb-16 animate-slide-up">
                 <h2 class="text-3xl font-bold text-primary mb-4">Mitra & Dukungan</h2>
-                <p class="text-gray-600 max-w-2xl mx-auto text-lg">Dukungan dari berbagai pihak untuk mewujudkan inovasi Sok!Anak</p>
             </div>
             
             <div class="max-w-4xl mx-auto">
@@ -624,7 +623,7 @@
                     <h3 class="text-lg font-semibold mb-4 flex items-center">
                         <i class="fas fa-child mr-3 text-secondary"></i> Sok!Anak
                     </h3>
-                    <p class="text-gray-300 mb-4">Sistem monitoring gizi anak berbasis AIoT yang terintegrasi dengan timbangan digital untuk deteksi dini dan pencegahan stunting.</p>
+                    <p class="text-gray-300 mb-4">Sistem Pemantauan Gizi dan Intervensi Dini Berbasis IoT & AI.</p>
                     <p class="text-gray-300">Inovasi Desa Sukarame untuk Indonesia bebas stunting.</p>
                 </div>
                 <div>
@@ -655,12 +654,12 @@
                 </div>
                 <div>
                     <h3 class="text-lg font-semibold mb-4">Innovillage 2025</h3>
-                    <p class="text-gray-300 mb-4">Sok!Anak merupakan bagian dari program Social Project Innovillage 2025.</p>
+                    <p class="text-gray-300 mb-4">Sok!Anak merupakan bagian dari program sosial proyek Innovillage 2025.</p>
                     <div class="flex space-x-3">
-                        <a href="#" target="_blank" class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white hover:bg-primary-light transition shadow-sm transform hover:-translate-y-1">
+                        <a href="https://www.instagram.com/aiot_sokanak" target="_blank" class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white hover:bg-primary-light transition shadow-sm transform hover:-translate-y-1">
                             <i class="fab fa-instagram"></i>
                         </a>
-                        <a href="#" target="_blank" class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white hover:bg-primary-light transition shadow-sm transform hover:-translate-y-1">
+                        <a href="https://youtube.com/@aiotsokanak?si=_OQOhr5FkmBJ8uZP" target="_blank" class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white hover:bg-primary-light transition shadow-sm transform hover:-translate-y-1">
                             <i class="fab fa-youtube"></i>
                         </a>
                     </div>
